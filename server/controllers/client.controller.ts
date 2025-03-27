@@ -222,7 +222,7 @@ export const loginClient: RequestHandler<{}, any, LoginBody> = async (req, res) 
         console.log('Отправляем данные пользователя:', userData);
 
         res.json({
-            token: 'temp_token_' + client.client_id,
+            token: client.client_token,
             user: userData
         });
         console.log('=== Конец процесса входа ===');
