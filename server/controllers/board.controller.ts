@@ -19,11 +19,13 @@ export interface BoardParams {
  * @property {string} board_name - Название доски
  * @property {boolean} board_general - Флаг, является ли доска общей
  * @property {number} board_creator_id - ID пользователя, создавшего доску
+ * @property {string} client_token - Токен клиента
  */
 export interface BoardBody {
     board_name: string;
     board_general: boolean;
     board_creator_id: number;
+    client_token: string;
 }
 
 
@@ -38,11 +40,11 @@ export const getBoards: RequestHandler = async (req, res) => {
     try {
         const client_token = req.body.client_token;
         console.log(client_token);
-        const client_email = await isToken(client_token);
-        console.log(client_email);
+        const client_id = await isToken(client_token);
+        console.log(client_id);
         const boards = await Board.findAll({
             where: {
-                board_creator_id: client_email
+                board_creator_id: client_id
             }
         });
         res.json(boards);
@@ -59,11 +61,25 @@ export const getBoards: RequestHandler = async (req, res) => {
  */
 export const createBoard: RequestHandler<{}, any, BoardBody> = async (req, res) => {
     try {
-        const { board_name, board_general, board_creator_id } = req.body;
+        const client_token = req.body.client_token;
+        
+        if (!client_token) {
+            res.status(401).json({ error: 'Token is required' });
+            return;
+        }
+
+        const client_id = await isToken(client_token);
+        
+        if (!client_id) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
+        const { board_name, board_general } = req.body;
         const board = await Board.create({
             board_name,
             board_general,
-            board_creator_id
+            board_creator_id: client_id
         });
         res.status(201).json(board);
     } catch (error) {
@@ -79,10 +95,30 @@ export const createBoard: RequestHandler<{}, any, BoardBody> = async (req, res) 
  */
 export const updateBoard: RequestHandler<BoardParams, any, Partial<BoardBody>> = async (req, res) => {
     try {
+        const client_token = req.body.client_token;
+        
+        if (!client_token) {
+            res.status(401).json({ error: 'Token is required' });
+            return;
+        }
+
+        const client_id = await isToken(client_token);
+        
+        if (!client_id) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
         const { board_id } = req.params;
         const { board_name, board_general } = req.body;
         
-        const board = await Board.findByPk(board_id);
+        const board = await Board.findOne({
+            where: {
+                board_id,
+                board_creator_id: client_id
+            }
+        });
+        
         if (!board) {
             res.status(404).json({ error: 'Board not found' });
             return;
@@ -103,9 +139,29 @@ export const updateBoard: RequestHandler<BoardParams, any, Partial<BoardBody>> =
  */
 export const deleteBoard: RequestHandler<BoardParams> = async (req, res) => {
     try {
+        const client_token = req.body.client_token;
+        
+        if (!client_token) {
+            res.status(401).json({ error: 'Token is required' });
+            return;
+        }
+
+        const client_id = await isToken(client_token);
+        
+        if (!client_id) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
         const { board_id } = req.params;
         
-        const board = await Board.findByPk(board_id);
+        const board = await Board.findOne({
+            where: {
+                board_id,
+                board_creator_id: client_id
+            }
+        });
+        
         if (!board) {
             res.status(404).json({ error: 'Board not found' });
             return;
@@ -126,8 +182,27 @@ export const deleteBoard: RequestHandler<BoardParams> = async (req, res) => {
  */
 export const getBoard: RequestHandler<BoardParams> = async (req, res) => {
     try {
+        const client_token = req.body.client_token;
+        
+        if (!client_token) {
+            res.status(401).json({ error: 'Token is required' });
+            return;
+        }
+
+        const client_id = await isToken(client_token);
+        
+        if (!client_id) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
         const { board_id } = req.params;
-        const board = await Board.findByPk(board_id);
+        const board = await Board.findOne({
+            where: {
+                board_id,
+                board_creator_id: client_id
+            }
+        });
         
         if (!board) {
             res.status(404).json({ error: 'Board not found' });

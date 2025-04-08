@@ -47,13 +47,13 @@ export const isToken = async (client_token:string) => {
                     [Op.eq]: client_token
                 }
             },
-            attributes: ['client_id'] // Возвращаем только email
+            attributes: ['client_id'] // Возвращаем только id
         });
 
         console.log(client);
 
         if (client) {
-            return client.dataValues.client_id; // Возвращаем email, если токен найден
+            return client.dataValues.client_id; // Возвращаем id, если токен найден
         } else {
             return null; // Токен не найден
         }
