@@ -41,6 +41,7 @@ export interface LoginBody {
 
 export const isToken = async (client_token:string) => {
     try {
+        console.log('client_token',client_token);
         const client = await Client.findOne({
             where: {
                 client_token: {
@@ -50,7 +51,7 @@ export const isToken = async (client_token:string) => {
             attributes: ['client_id'] // Возвращаем только id
         });
 
-        console.log(client);
+        console.log('client',client);
 
         if (client) {
             return client.dataValues.client_id; // Возвращаем id, если токен найден

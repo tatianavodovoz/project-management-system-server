@@ -22,10 +22,11 @@ export interface BoardParams {
  * @property {string} client_token - Токен клиента
  */
 export interface BoardBody {
-    board_name: string;
-    board_general: boolean;
-    board_creator_id: number;
     client_token: string;
+        board_name: string;
+        board_general: boolean;
+        board_creator_id: number;
+    
 }
 
 
@@ -38,10 +39,12 @@ export interface BoardBody {
  */
 export const getBoards: RequestHandler = async (req, res) => {
     try {
-        const client_token = req.body.client_token;
-        console.log(client_token);
-        const client_id = await isToken(client_token);
-        console.log(client_id);
+        const clientToken = req.headers.client_token;
+        if (!clientToken || typeof clientToken !== 'string') {
+            res.status(401).json({ error: 'Отсутствует или неверный токен клиента' });
+            return;
+        }
+        const client_id = await isToken(clientToken);
         const boards = await Board.findAll({
             where: {
                 board_creator_id: client_id
@@ -61,14 +64,13 @@ export const getBoards: RequestHandler = async (req, res) => {
  */
 export const createBoard: RequestHandler<{}, any, BoardBody> = async (req, res) => {
     try {
-        const client_token = req.body.client_token;
-        
-        if (!client_token) {
-            res.status(401).json({ error: 'Token is required' });
+        const clientToken = req.headers.client_token;
+        if (!clientToken || typeof clientToken !== 'string') {
+            res.status(401).json({ error: 'Отсутствует или неверный токен клиента' });
             return;
         }
 
-        const client_id = await isToken(client_token);
+        const client_id = await isToken(clientToken);
         
         if (!client_id) {
             res.status(401).json({ error: 'Unauthorized' });
@@ -95,14 +97,13 @@ export const createBoard: RequestHandler<{}, any, BoardBody> = async (req, res) 
  */
 export const updateBoard: RequestHandler<BoardParams, any, Partial<BoardBody>> = async (req, res) => {
     try {
-        const client_token = req.body.client_token;
-        
-        if (!client_token) {
-            res.status(401).json({ error: 'Token is required' });
+        const clientToken = req.headers.client_token;
+        if (!clientToken || typeof clientToken !== 'string') {
+            res.status(401).json({ error: 'Отсутствует или неверный токен клиента' });
             return;
         }
 
-        const client_id = await isToken(client_token);
+        const client_id = await isToken(clientToken);
         
         if (!client_id) {
             res.status(401).json({ error: 'Unauthorized' });
@@ -139,14 +140,12 @@ export const updateBoard: RequestHandler<BoardParams, any, Partial<BoardBody>> =
  */
 export const deleteBoard: RequestHandler<BoardParams> = async (req, res) => {
     try {
-        const client_token = req.body.client_token;
-        
-        if (!client_token) {
-            res.status(401).json({ error: 'Token is required' });
+        const clientToken = req.headers.client_token;
+        if (!clientToken || typeof clientToken !== 'string') {
+            res.status(401).json({ error: 'Отсутствует или неверный токен клиента' });
             return;
         }
-
-        const client_id = await isToken(client_token);
+        const client_id = await isToken(clientToken);
         
         if (!client_id) {
             res.status(401).json({ error: 'Unauthorized' });
@@ -182,14 +181,12 @@ export const deleteBoard: RequestHandler<BoardParams> = async (req, res) => {
  */
 export const getBoard: RequestHandler<BoardParams> = async (req, res) => {
     try {
-        const client_token = req.body.client_token;
-        
-        if (!client_token) {
-            res.status(401).json({ error: 'Token is required' });
+        const clientToken = req.headers.client_token;
+        if (!clientToken || typeof clientToken !== 'string') {
+            res.status(401).json({ error: 'Отсутствует или неверный токен клиента' });
             return;
         }
-
-        const client_id = await isToken(client_token);
+        const client_id = await isToken(clientToken);
         
         if (!client_id) {
             res.status(401).json({ error: 'Unauthorized' });
