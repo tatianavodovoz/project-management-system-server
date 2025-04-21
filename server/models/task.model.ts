@@ -9,6 +9,7 @@ class Task extends Model {
     public task_performer_id!: number;
     public task_deadline!: Date;
     public task_board_id!: number;
+    public task_importance!: number;
 
     // связи
     static associate(models: any) {
@@ -46,6 +47,11 @@ Task.init({
     task_board_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+    },
+    task_importance: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
     },
 }, {
     sequelize,
