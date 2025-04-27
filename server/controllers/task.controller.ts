@@ -19,6 +19,9 @@ export interface TaskParams {
  * @property {number} task_performer_id - ID исполнителя задачи
  * @property {Date} task_deadline - Срок выполнения задачи
  * @property {number} task_board_id - ID доски, к которой привязана задача
+ * @property {boolean} task_importance - Важность задачи
+ * @property {number} task_time_warning - За сколько дней до дедлайна задача считается срочной
+ * @property {number} task_category_matrix - Категория задачи в Матрице Эйзенхауэра
  */
 export interface TaskBody {
     task_name: string;
@@ -27,6 +30,9 @@ export interface TaskBody {
     task_performer_id: number;
     task_deadline: Date;
     task_board_id: number;
+    task_importance: boolean;
+    task_time_warning: number;
+    task_category_matrix: number;
 }
 
 /**
@@ -62,7 +68,10 @@ export const createTask: RequestHandler<{}, any, TaskBody> = async (req, res) =>
             task_status, 
             task_performer_id, 
             task_deadline, 
-            task_board_id 
+            task_board_id,
+            task_importance,
+            task_time_warning,
+            task_category_matrix
         } = req.body;
 
         const task = await Task.create({
@@ -71,7 +80,10 @@ export const createTask: RequestHandler<{}, any, TaskBody> = async (req, res) =>
             task_status,
             task_performer_id,
             task_deadline,
-            task_board_id
+            task_board_id,
+            task_importance,
+            task_time_warning,
+            task_category_matrix
         });
         res.status(201).json(task);
     } catch (error) {
