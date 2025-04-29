@@ -13,6 +13,14 @@ class Task extends Model {
     public task_time_warning!: number;
     public task_category_matrix!: number;
 
+    // для метода RICE
+    public task_reach!: number;        // Охват (сколько пользователей затронет)
+    public task_impact!: number;       // Влияние (1-3: низкое, среднее, высокое)
+    public task_confidence!: number;   // Уверенность (0-100%)
+    public task_effort!: number;       // Усилия (в человеко-недели)
+    public task_rice_score!: number;   // Итоговый RICE score
+
+
     // связи
     static associate(models: any) {
         Task.belongsTo(models.Client, { foreignKey: 'task_performer_id' });
@@ -64,6 +72,31 @@ Task.init({
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 4,
+    },
+    task_reach: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0, // Default value can be adjusted as needed
+    },
+    task_impact: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1, // Assuming 1 is the default for low impact
+    },
+    task_confidence: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0, // Default value can be adjusted as needed
+    },
+    task_effort: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0, // Default value can be adjusted as needed
+    },
+    task_rice_score: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0, // Default value can be adjusted as needed
     },
 }, {
     sequelize,
