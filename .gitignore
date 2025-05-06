@@ -9,7 +9,7 @@ node_modules/
 npm-debug.log*
 
 # Build output
-dist/
+# dist/
 build/
 
 # IDE files
